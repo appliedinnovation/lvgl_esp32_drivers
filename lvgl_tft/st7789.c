@@ -10,7 +10,7 @@
 #include "st7789.h"
 
 #include "disp_spi.h"
-#include "display_bsp.h"
+#include "display_hal.h"
 
 /*********************
  *      DEFINES
@@ -51,7 +51,7 @@ static void st7789_reset(void);
  **********************/
 void st7789_init(void)
 {
-    display_bsp_init_io();
+    display_hal_init_io();
 
     lcd_init_cmd_t st7789_init_cmds[] = {
         {0xCF, {0x00, 0x83, 0X30}, 3},
@@ -98,7 +98,7 @@ void st7789_init(void)
         st7789_send_cmd(st7789_init_cmds[cmd].cmd);
         st7789_send_data(st7789_init_cmds[cmd].data, st7789_init_cmds[cmd].databytes&0x1F);
         if (st7789_init_cmds[cmd].databytes & 0x80) {
-            display_bsp_delay(100);
+            display_hal_delay(100);
         }
         cmd++;
     }
@@ -120,7 +120,7 @@ void st7789_enable_backlight(bool backlight)
     tmp = backlight ? 0 : 1;
 #endif
 
-    display_bsp_backlight(tmp);
+    display_hal_backlight(tmp);
 #endif
 }
 
@@ -183,21 +183,21 @@ void st7789_flush(lv_disp_drv_t * drv, const lv_area_t * area, lv_color_t * colo
 static void st7789_send_cmd(uint8_t cmd)
 {
     disp_wait_for_pending_transactions();
-    display_bsp_gpio_dc(0);
+    display_hal_gpio_dc(0);
     disp_spi_send_data(&cmd, 1);
 }
 
 static void st7789_send_data(void * data, uint16_t length)
 {
     disp_wait_for_pending_transactions();
-    display_bsp_gpio_dc(1);
+    display_hal_gpio_dc(1);
     disp_spi_send_data(data, length);
 }
 
 static void st7789_send_color(void * data, uint16_t length)
 {
     disp_wait_for_pending_transactions();
-    display_bsp_gpio_dc(1);
+    display_hal_gpio_dc(1);
     disp_spi_send_colors(data, length);
 }
 
@@ -205,10 +205,10 @@ static void st7789_send_color(void * data, uint16_t length)
 static void st7789_reset(void)
 {
 #if !defined(CONFIG_LV_DISP_ST7789_SOFT_RESET)
-    display_bsp_gpio_rst(0);
-    display_bsp_delay(100);
-    display_bsp_gpio_rst(1);
-    display_bsp_delay(100);
+    display_hal_gpio_rst(0);
+    display_hal_delay(100);
+    display_hal_gpio_rst(1);
+    display_hal_delay(100);
 #else
     st7789_send_cmd(ST7789_SWRESET);
 #endif
