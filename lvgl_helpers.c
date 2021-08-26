@@ -115,7 +115,6 @@ void lvgl_driver_init(void)
     
     disp_spi_add_device(TFT_SPI_HOST);
     
-    disp_driver_init();
 #elif defined (CONFIG_LV_TFT_DISPLAY_PROTOCOL_I2C)
     ESP_LOGI(TAG, "Initializing I2C master for display");
     /* Init the i2c master on the display driver code */
