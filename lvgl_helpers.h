@@ -16,7 +16,6 @@ extern "C" {
 
 #include "lvgl_spi_conf.h"
 #include "lvgl_tft/disp_driver.h"
-#include "lvgl_tft/esp_lcd_backlight.h"
 #include "lvgl_touch/touch_driver.h"
 
 /*********************
@@ -38,44 +37,44 @@ extern "C" {
 #define DISP_BUF_SIZE   CONFIG_CUSTOM_DISPLAY_BUFFER_BYTES
 #else
 #if defined (CONFIG_LV_TFT_DISPLAY_CONTROLLER_ST7789)
-#define DISP_BUF_SIZE  (LV_HOR_RES_MAX * 40)
+#define DISP_BUF_SIZE  (CONFIG_SCREEN_WIDTH * 40)
 #elif defined CONFIG_LV_TFT_DISPLAY_CONTROLLER_ST7735S
-#define DISP_BUF_SIZE  (LV_HOR_RES_MAX * 40)
+#define DISP_BUF_SIZE  (CONFIG_SCREEN_WIDTH * 40)
 #elif defined CONFIG_LV_TFT_DISPLAY_CONTROLLER_ST7796S
-#define DISP_BUF_SIZE  (LV_HOR_RES_MAX * 40)
+#define DISP_BUF_SIZE  (CONFIG_SCREEN_WIDTH * 40)
 #elif defined CONFIG_LV_TFT_DISPLAY_CONTROLLER_HX8357
-#define DISP_BUF_SIZE  (LV_HOR_RES_MAX * 40)
+#define DISP_BUF_SIZE  (CONFIG_SCREEN_WIDTH * 40)
 #elif defined CONFIG_LV_TFT_DISPLAY_CONTROLLER_SH1107
-#define DISP_BUF_SIZE  (LV_HOR_RES_MAX * LV_VER_RES_MAX)
+#define DISP_BUF_SIZE  (CONFIG_SCREEN_WIDTH * CONFIG_SCREEN_HEIGHT)
 #elif defined CONFIG_LV_TFT_DISPLAY_CONTROLLER_ILI9481
-#define DISP_BUF_SIZE  (LV_HOR_RES_MAX * 40)
+#define DISP_BUF_SIZE  (CONFIG_SCREEN_WIDTH * 40)
 #elif defined CONFIG_LV_TFT_DISPLAY_CONTROLLER_ILI9486
-#define DISP_BUF_SIZE  (LV_HOR_RES_MAX * 40)
+#define DISP_BUF_SIZE  (CONFIG_SCREEN_WIDTH * 40)
 #elif defined CONFIG_LV_TFT_DISPLAY_CONTROLLER_ILI9488
-#define DISP_BUF_SIZE  (LV_HOR_RES_MAX * 40)
+#define DISP_BUF_SIZE  (CONFIG_SCREEN_WIDTH * 40)
 #elif defined CONFIG_LV_TFT_DISPLAY_CONTROLLER_ILI9341
-#define DISP_BUF_SIZE  (LV_HOR_RES_MAX * 40)
+#define DISP_BUF_SIZE  (CONFIG_SCREEN_WIDTH * 40)
 #elif defined CONFIG_LV_TFT_DISPLAY_CONTROLLER_SSD1306
 #if defined (CONFIG_LV_THEME_MONO)
-#define DISP_BUF_SIZE  (LV_HOR_RES_MAX * (LV_VER_RES_MAX / 8))
+#define DISP_BUF_SIZE  (CONFIG_SCREEN_WIDTH * (CONFIG_SCREEN_HEIGHT / 8))
 #else
-#define DISP_BUF_SIZE  (LV_HOR_RES_MAX * LV_VER_RES_MAX)
+#define DISP_BUF_SIZE  (CONFIG_SCREEN_WIDTH * CONFIG_SCREEN_HEIGHT)
 #endif
 #elif defined (CONFIG_LV_TFT_DISPLAY_CONTROLLER_FT81X)
 #define DISP_BUF_LINES  40
-#define DISP_BUF_SIZE  (LV_HOR_RES_MAX * DISP_BUF_LINES)
+#define DISP_BUF_SIZE  (CONFIG_SCREEN_WIDTH * DISP_BUF_LINES)
 #elif defined (CONFIG_LV_TFT_DISPLAY_CONTROLLER_IL3820)
-#define DISP_BUF_SIZE (LV_VER_RES_MAX * IL3820_COLUMNS)
+#define DISP_BUF_SIZE (CONFIG_SCREEN_HEIGHT * IL3820_COLUMNS)
 #elif defined CONFIG_LV_TFT_DISPLAY_CONTROLLER_RA8875
-#define DISP_BUF_SIZE  (LV_HOR_RES_MAX * 40)
+#define DISP_BUF_SIZE  (CONFIG_SCREEN_WIDTH * 40)
 #elif defined (CONFIG_LV_TFT_DISPLAY_CONTROLLER_GC9A01)
-#define DISP_BUF_SIZE  (LV_HOR_RES_MAX * 40)
+#define DISP_BUF_SIZE  (CONFIG_SCREEN_WIDTH * 40)
 #elif defined (CONFIG_LV_TFT_DISPLAY_CONTROLLER_JD79653A)
-#define DISP_BUF_SIZE ((LV_VER_RES_MAX * LV_VER_RES_MAX) / 8) // 5KB
+#define DISP_BUF_SIZE ((CONFIG_SCREEN_HEIGHT * CONFIG_SCREEN_HEIGHT) / 8) // 5KB
 #elif defined (CONFIG_LV_TFT_DISPLAY_CONTROLLER_UC8151D)
-#define DISP_BUF_SIZE ((LV_VER_RES_MAX * LV_VER_RES_MAX) / 8) // 2888 bytes
+#define DISP_BUF_SIZE ((CONFIG_SCREEN_HEIGHT * CONFIG_SCREEN_HEIGHT) / 8) // 2888 bytes
 #elif defined CONFIG_LV_TFT_DISPLAY_CONTROLLER_ILI9163C
-#define DISP_BUF_SIZE (LV_HOR_RES_MAX * 40)
+#define DISP_BUF_SIZE (CONFIG_SCREEN_WIDTH * 40)
 #else
 #error "No display controller selected"
 #endif
@@ -89,14 +88,14 @@ extern "C" {
  * GLOBAL PROTOTYPES
  **********************/
 
-void lvgl_i2c_locking(void* leader);
-
 /* Initialize detected SPI and I2C bus and devices */
 void lvgl_driver_init(void);
 
 /* Initialize SPI master  */
 bool lvgl_spi_driver_init(int host, int miso_pin, int mosi_pin, int sclk_pin,
     int max_transfer_sz, int dma_channel, int quadwp_pin, int quadhd_pin);
+/* Initialize I2C master  */
+bool lvgl_i2c_driver_init(int port, int sda_pin, int scl_pin, int speed);
 
 /**********************
  *      MACROS
